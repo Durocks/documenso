@@ -203,8 +203,8 @@ test.describe('Envelope distribute validation', () => {
     expect(response.success).toBe(true);
   });
 
-  // Note: FREE_SIGNATURE field type is not supported via the v2 API for field creation,
-  // so we only test with SIGNATURE fields here. The v1 tests cover FREE_SIGNATURE
+  // Note: IMAGE_UPLOAD field type is not supported via the v2 API for field creation,
+  // so we only test with SIGNATURE fields here. The v1 tests cover IMAGE_UPLOAD
   // using direct Prisma creation.
 
   test('should succeed when VIEWER has no fields', async ({ request }) => {

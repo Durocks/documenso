@@ -170,21 +170,34 @@ const handleV1Loader = async ({ params, request }: Route.LoaderArgs) => {
 const handleV2Loader = async ({ params, request }: Route.LoaderArgs) => {
   const { token } = params;
 
+  console.log('[DEBUG] handleV2Loader called with token:', token);
+
   const { requestMetadata } = getOptionalLoaderContext();
 
   const { user } = await getOptionalSession(request);
+
+  console.log('[DEBUG] User session:', user?.email);
 
   const envelopeForSigning = await getEnvelopeForRecipientSigning({
     token,
     userId: user?.id,
   })
     .then((envelopeForSigning) => {
+      console.log('[DEBUG] getEnvelopeForRecipientSigning success:', {
+        envelopeId: envelopeForSigning.envelope?.id,
+        recipientId: envelopeForSigning.recipient?.id,
+        isCompleted: envelopeForSigning.isCompleted,
+        isRejected: envelopeForSigning.isRejected,
+        isExpired: envelopeForSigning.isExpired,
+        isRecipientsTurn: envelopeForSigning.isRecipientsTurn,
+      });
       return {
         isDocumentAccessValid: true,
         ...envelopeForSigning,
       } as const;
     })
     .catch(async (e) => {
+      console.log('[DEBUG] getEnvelopeForRecipientSigning error:', e);
       const error = AppError.parseError(e);
 
       if (error.code === AppErrorCode.UNAUTHORIZED) {
@@ -262,7 +275,10 @@ const handleV2Loader = async ({ params, request }: Route.LoaderArgs) => {
 export async function loader(loaderArgs: Route.LoaderArgs) {
   const { token } = loaderArgs.params;
 
+  console.log('[DEBUG] Current token:', token);
+
   if (!token) {
+    console.log('[DEBUG] No token provided');
     throw new Response('Not Found', { status: 404 });
   }
 
@@ -272,16 +288,32 @@ export async function loader(loaderArgs: Route.LoaderArgs) {
       token,
     },
     select: {
+      id: true,
+      email: true,
+      signingStatus: true,
       envelope: {
         select: {
+          id: true,
           internalVersion: true,
           teamId: true,
+          status: true,
         },
       },
     },
   });
 
+  console.log('[DEBUG] Recipient lookup result:', {
+    token,
+    foundRecipient: !!foundRecipient,
+    recipientId: foundRecipient?.id,
+    recipientEmail: foundRecipient?.email,
+    recipientStatus: foundRecipient?.signingStatus,
+    envelopeId: foundRecipient?.envelope?.id,
+    envelopeStatus: foundRecipient?.envelope?.status,
+  });
+
   if (!foundRecipient) {
+    console.log('[DEBUG] Recipient not found for token:', token);
     throw new Response('Not Found', { status: 404 });
   }
 

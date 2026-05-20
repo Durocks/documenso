@@ -23,6 +23,7 @@ export const ZLocalFieldSchema = z.object({
   positionY: z.number().min(0),
   width: z.number().min(0),
   height: z.number().min(0),
+  customText: z.string().optional(),
   fieldMeta: ZFieldMetaSchema,
 });
 
@@ -82,6 +83,7 @@ export const useEditorFields = ({ envelope, handleFieldsUpdate }: EditorFieldsPr
         width: Number(field.width),
         height: Number(field.height),
         recipientId: field.recipientId,
+        customText: field.customText ?? '',
         fieldMeta: field.fieldMeta ? ZFieldMetaSchema.parse(field.fieldMeta) : undefined,
       }),
     );

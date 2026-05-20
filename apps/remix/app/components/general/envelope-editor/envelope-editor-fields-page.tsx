@@ -41,6 +41,7 @@ import { EditorFieldCheckboxForm } from '~/components/forms/editor/editor-field-
 import { EditorFieldDateForm } from '~/components/forms/editor/editor-field-date-form';
 import { EditorFieldDropdownForm } from '~/components/forms/editor/editor-field-dropdown-form';
 import { EditorFieldEmailForm } from '~/components/forms/editor/editor-field-email-form';
+import { EditorFieldFreeSignatureForm } from '~/components/forms/editor/editor-field-free-signature-form';
 import { EditorFieldInitialsForm } from '~/components/forms/editor/editor-field-initials-form';
 import { EditorFieldNameForm } from '~/components/forms/editor/editor-field-name-form';
 import { EditorFieldNumberForm } from '~/components/forms/editor/editor-field-number-form';
@@ -55,9 +56,10 @@ import { EnvelopeEditorFieldsPageRenderer } from './envelope-editor-fields-page-
 import { EnvelopeRendererFileSelector } from './envelope-file-selector';
 import { EnvelopeRecipientSelector } from './envelope-recipient-selector';
 
-const FieldSettingsTypeTranslations: Record<FieldType, MessageDescriptor> = {
+const FieldSettingsTypeTranslations: Record<string, MessageDescriptor> = {
   [FieldType.SIGNATURE]: msg`Signature Settings`,
   [FieldType.FREE_SIGNATURE]: msg`Free Signature Settings`,
+  IMAGE_UPLOAD: msg`Image Upload Settings`,
   [FieldType.TEXT]: msg`Text Settings`,
   [FieldType.DATE]: msg`Date Settings`,
   [FieldType.EMAIL]: msg`Email Settings`,
@@ -372,11 +374,49 @@ export const EnvelopeEditorFieldsPage = () => {
                 <div className="px-4 [&_label]:text-foreground/70 [&_label]:text-xs">
                   <h3 className="font-semibold text-sm">{_(FieldSettingsTypeTranslations[selectedField.type])}</h3>
 
-                  {match(selectedField.type)
+                  {match(selectedField.type as any)
                     .with(FieldType.SIGNATURE, () => (
                       <EditorFieldSignatureForm
                         value={selectedField?.fieldMeta as TSignatureFieldMeta | undefined}
                         onValueChange={(value) => updateSelectedFieldMeta(value)}
+                      />
+                    ))
+                    .with(FieldType.FREE_SIGNATURE, () => (
+                      <EditorFieldFreeSignatureForm
+                        customText={selectedField?.customText ?? null}
+                        textAlign={(selectedField?.fieldMeta as any)?.textAlign}
+                        onCustomTextChange={(value) =>
+                          editorFields.updateFieldByFormId(selectedField.formId, {
+                            customText: value,
+                          })
+                        }
+                        onTextAlignChange={(value) =>
+                          editorFields.updateFieldByFormId(selectedField.formId, {
+                            fieldMeta: {
+                              ...selectedField.fieldMeta,
+                              textAlign: value,
+                            } as any,
+                          })
+                        }
+                      />
+                    ))
+                    .with('IMAGE_UPLOAD', () => (
+                      <EditorFieldFreeSignatureForm
+                        customText={selectedField?.customText ?? null}
+                        textAlign={(selectedField?.fieldMeta as any)?.textAlign}
+                        onCustomTextChange={(value) =>
+                          editorFields.updateFieldByFormId(selectedField.formId, {
+                            customText: value,
+                          })
+                        }
+                        onTextAlignChange={(value) =>
+                          editorFields.updateFieldByFormId(selectedField.formId, {
+                            fieldMeta: {
+                              ...selectedField.fieldMeta,
+                              textAlign: value,
+                            } as any,
+                          })
+                        }
                       />
                     ))
                     .with(FieldType.CHECKBOX, () => (

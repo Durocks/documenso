@@ -120,7 +120,7 @@ export function FieldRootContainer({ field, children, color, className, readonly
           'field--FieldRootContainer field-card-container dark-mode-disabled group relative z-20 flex h-full w-full items-center rounded-[2px] bg-white/90 ring-2 ring-gray-200 transition-all',
           color?.base,
           {
-            'px-2': field.type !== FieldType.SIGNATURE && field.type !== FieldType.FREE_SIGNATURE,
+            'px-2': field.type !== FieldType.SIGNATURE && field.type !== FieldType.IMAGE_UPLOAD,
             'justify-center': !field.inserted,
             'ring-orange-300': isValidating && isFieldUnsignedAndRequired(field),
           },

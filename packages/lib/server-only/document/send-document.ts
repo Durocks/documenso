@@ -360,7 +360,14 @@ export const extractFieldAutoInsertValues = (
   unknownField: Field,
   recipient: Pick<Recipient, 'email'>,
 ): { fieldId: number; customText: string } | null => {
-  const parsedField = ZFieldAndMetaSchema.safeParse(unknownField);
+  // Normalize `fieldMeta: null` (stored in DB as JSON null) to `undefined` so
+  // the shared Zod schema treats it the same as an empty object/absent meta.
+  const normalizedField = {
+    ...unknownField,
+    fieldMeta: unknownField.fieldMeta === null ? undefined : unknownField.fieldMeta,
+  } as Field;
+
+  const parsedField = ZFieldAndMetaSchema.safeParse(normalizedField);
 
   if (parsedField.error) {
     throw new AppError(AppErrorCode.INVALID_REQUEST, {

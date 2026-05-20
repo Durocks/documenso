@@ -582,7 +582,7 @@ const mapLocalFieldsToFields = ({
       height: new Prisma.Decimal(field.height),
       secondaryId: foundField?.secondaryId || '',
       inserted: foundField?.inserted || false,
-      customText: foundField?.customText || '',
+      customText: field.customText,
       fieldMeta: field.fieldMeta || null,
     };
   });

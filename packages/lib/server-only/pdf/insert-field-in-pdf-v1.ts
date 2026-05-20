@@ -119,14 +119,14 @@ export const insertFieldInPDFV1 = async (pdf: PDFDocument, field: FieldWithSigna
     isSignatureField ? { features: { calt: false } } : undefined,
   );
 
-  if (field.type === FieldType.SIGNATURE || field.type === FieldType.FREE_SIGNATURE) {
+  if (field.type === FieldType.SIGNATURE || field.type === FieldType.IMAGE_UPLOAD) {
     await pdf.embedFont(fontCaveat);
   }
 
   await match(field)
     .with(
       {
-        type: P.union(FieldType.SIGNATURE, FieldType.FREE_SIGNATURE),
+        type: P.union(FieldType.SIGNATURE, FieldType.IMAGE_UPLOAD),
       },
       async (field) => {
         if (field.signature?.signatureImageAsBase64) {

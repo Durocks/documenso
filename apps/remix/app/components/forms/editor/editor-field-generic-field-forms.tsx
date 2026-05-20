@@ -60,9 +60,11 @@ export const EditorGenericFontSizeField = ({
 export const EditorGenericTextAlignField = ({
   formControl,
   className,
+  label,
 }: {
   formControl: FormControlType;
   className?: string;
+  label?: string;
 }) => {
   const { t } = useLingui();
 
@@ -72,13 +74,11 @@ export const EditorGenericTextAlignField = ({
       name="textAlign"
       render={({ field }) => (
         <FormItem className={className}>
-          <FormLabel>
-            <Trans>Text Align</Trans>
-          </FormLabel>
+          <FormLabel>{label ? label : <Trans>Text Align</Trans>}</FormLabel>
           <FormControl>
             <Select {...field} onValueChange={field.onChange}>
               <SelectTrigger data-testid="field-form-textAlign">
-                <SelectValue placeholder={t`Select text align`} />
+                <SelectValue placeholder={label ? label : t`Select text align`} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="left">

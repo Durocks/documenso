@@ -42,6 +42,7 @@ export const SignaturePad = ({
   uploadSignatureEnabled = true,
   drawSignatureEnabled = true,
 }: SignaturePadProps) => {
+  console.log('SignaturePad: Component mounted');
   const [imageSignature, setImageSignature] = useState(isBase64Image(value) ? value : '');
   const [drawSignature, setDrawSignature] = useState(isBase64Image(value) ? value : '');
   const [typedSignature, setTypedSignature] = useState(isBase64Image(value) ? '' : value);

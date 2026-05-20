@@ -226,7 +226,7 @@ export const extractFieldInsertionValues = ({
         inserted: true,
       };
     })
-    .with({ type: FieldType.SIGNATURE }, (fieldValue) => {
+    .with({ type: P.union(FieldType.SIGNATURE, FieldType.IMAGE_UPLOAD) }, (fieldValue) => {
       const { value } = fieldValue;
 
       if (!value) {

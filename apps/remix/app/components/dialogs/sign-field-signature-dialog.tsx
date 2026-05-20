@@ -17,6 +17,7 @@ export type SignFieldSignatureDialogProps = {
 
 export const SignFieldSignatureDialog = createCallable<SignFieldSignatureDialogProps, string | null>(
   ({ call, fullName, typedSignatureEnabled, uploadSignatureEnabled, drawSignatureEnabled, initialSignature }) => {
+    console.log('SignFieldSignatureDialog: Component mounted');
     const [localSignature, setLocalSignature] = useState(initialSignature);
 
     return (

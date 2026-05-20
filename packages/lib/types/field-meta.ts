@@ -51,7 +51,8 @@ export type GenericTextFieldTypeMetas =
   | TEmailFieldMeta
   | TDateFieldMeta
   | TTextFieldMeta
-  | TNumberFieldMeta;
+  | TNumberFieldMeta
+  | TFreeSignatureFieldMeta;
 
 const ZFieldMetaLineHeight = z.coerce
   .number()
@@ -115,23 +116,23 @@ export const ZTextFieldMeta = ZBaseFieldMeta.extend({
   text: z.string().optional(),
   characterLimit: z.coerce.number({ invalid_type_error: 'Value must be a number' }).min(0).optional(),
   textAlign: ZFieldTextAlignSchema.optional(),
-  lineHeight: ZFieldMetaLineHeight.nullish(),
-  letterSpacing: ZFieldMetaLetterSpacing.nullish(),
-  verticalAlign: ZFieldMetaVerticalAlign.nullish(),
+  lineHeight: ZFieldMetaLineHeight.nullable().optional(),
+  letterSpacing: ZFieldMetaLetterSpacing.nullable().optional(),
+  verticalAlign: ZFieldMetaVerticalAlign.nullable().optional(),
 });
 
 export type TTextFieldMeta = z.infer<typeof ZTextFieldMeta>;
 
 export const ZNumberFieldMeta = ZBaseFieldMeta.extend({
   type: z.literal('number'),
-  numberFormat: z.string().nullish(),
+  numberFormat: z.string().nullable().optional(),
   value: z.string().optional(),
-  minValue: z.coerce.number().nullish(),
-  maxValue: z.coerce.number().nullish(),
+  minValue: z.coerce.number().nullable().optional(),
+  maxValue: z.coerce.number().nullable().optional(),
   textAlign: ZFieldTextAlignSchema.optional(),
-  lineHeight: ZFieldMetaLineHeight.nullish(),
-  letterSpacing: ZFieldMetaLetterSpacing.nullish(),
-  verticalAlign: ZFieldMetaVerticalAlign.nullish(),
+  lineHeight: ZFieldMetaLineHeight.nullable().optional(),
+  letterSpacing: ZFieldMetaLetterSpacing.nullable().optional(),
+  verticalAlign: ZFieldMetaVerticalAlign.nullable().optional(),
 });
 
 export type TNumberFieldMeta = z.infer<typeof ZNumberFieldMeta>;
@@ -180,13 +181,30 @@ export type TDropdownFieldMeta = z.infer<typeof ZDropdownFieldMeta>;
 
 export const ZSignatureFieldMeta = ZBaseFieldMeta.extend({
   type: z.literal('signature'),
+  textAlign: ZFieldTextAlignSchema.optional(),
   overflow: ZFieldOverflowMode.optional().default(DEFAULT_SIGNATURE_OVERFLOW_MODE),
 });
 
 export type TSignatureFieldMeta = z.infer<typeof ZSignatureFieldMeta>;
 
+export const ZImageUploadFieldMeta = ZBaseFieldMeta.extend({
+  type: z.literal('IMAGE_UPLOAD'),
+  textAlign: ZFieldTextAlignSchema.optional(),
+});
+
+export type TImageUploadFieldMeta = z.infer<typeof ZImageUploadFieldMeta>;
+
+export const ZFreeSignatureFieldMeta = ZBaseFieldMeta.extend({
+  type: z.literal('FREE_SIGNATURE'),
+  textAlign: ZFieldTextAlignSchema.optional(),
+});
+
+export type TFreeSignatureFieldMeta = z.infer<typeof ZFreeSignatureFieldMeta>;
+
 export const ZFieldMetaNotOptionalSchema = z.discriminatedUnion('type', [
   ZSignatureFieldMeta,
+  ZImageUploadFieldMeta,
+  ZFreeSignatureFieldMeta,
   ZInitialsFieldMeta,
   ZNameFieldMeta,
   ZEmailFieldMeta,
@@ -251,6 +269,7 @@ export const ZFieldMetaSchema = z
       .transform(() => undefined),
     ZFieldMetaNotOptionalSchema,
   ])
+  .nullable()
   .optional();
 
 export type TFieldMetaSchema = z.infer<typeof ZFieldMetaSchema>;
@@ -258,47 +277,51 @@ export type TFieldMetaSchema = z.infer<typeof ZFieldMetaSchema>;
 export const ZFieldAndMetaSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal(FieldType.SIGNATURE),
-    fieldMeta: ZSignatureFieldMeta.optional(),
+    fieldMeta: ZSignatureFieldMeta.nullable().optional(),
   }),
   z.object({
-    type: z.literal(FieldType.FREE_SIGNATURE),
-    fieldMeta: z.undefined(),
+    type: z.literal('IMAGE_UPLOAD'),
+    fieldMeta: ZImageUploadFieldMeta.nullable().optional(),
+  }),
+  z.object({
+    type: z.literal('FREE_SIGNATURE'),
+    fieldMeta: ZFreeSignatureFieldMeta.nullable().optional(),
   }),
   z.object({
     type: z.literal(FieldType.INITIALS),
-    fieldMeta: ZInitialsFieldMeta.optional(),
+    fieldMeta: ZInitialsFieldMeta.nullable().optional(),
   }),
   z.object({
     type: z.literal(FieldType.NAME),
-    fieldMeta: ZNameFieldMeta.optional(),
+    fieldMeta: ZNameFieldMeta.nullable().optional(),
   }),
   z.object({
     type: z.literal(FieldType.EMAIL),
-    fieldMeta: ZEmailFieldMeta.optional(),
+    fieldMeta: ZEmailFieldMeta.nullable().optional(),
   }),
   z.object({
     type: z.literal(FieldType.DATE),
-    fieldMeta: ZDateFieldMeta.optional(),
+    fieldMeta: ZDateFieldMeta.nullable().optional(),
   }),
   z.object({
     type: z.literal(FieldType.TEXT),
-    fieldMeta: ZTextFieldMeta.optional(),
+    fieldMeta: ZTextFieldMeta.nullable().optional(),
   }),
   z.object({
     type: z.literal(FieldType.NUMBER),
-    fieldMeta: ZNumberFieldMeta.optional(),
+    fieldMeta: ZNumberFieldMeta.nullable().optional(),
   }),
   z.object({
     type: z.literal(FieldType.RADIO),
-    fieldMeta: ZRadioFieldMeta.optional(),
+    fieldMeta: ZRadioFieldMeta.nullable().optional(),
   }),
   z.object({
     type: z.literal(FieldType.CHECKBOX),
-    fieldMeta: ZCheckboxFieldMeta.optional(),
+    fieldMeta: ZCheckboxFieldMeta.nullable().optional(),
   }),
   z.object({
     type: z.literal(FieldType.DROPDOWN),
-    fieldMeta: ZDropdownFieldMeta.optional(),
+    fieldMeta: ZDropdownFieldMeta.nullable().optional(),
   }),
 ]);
 
@@ -383,12 +406,26 @@ export const FIELD_DROPDOWN_META_DEFAULT_VALUES: TDropdownFieldMeta = {
 export const FIELD_SIGNATURE_META_DEFAULT_VALUES: TSignatureFieldMeta = {
   type: 'signature',
   fontSize: DEFAULT_SIGNATURE_TEXT_FONT_SIZE,
+  textAlign: FIELD_DEFAULT_GENERIC_ALIGN,
   overflow: DEFAULT_SIGNATURE_OVERFLOW_MODE,
 };
 
-export const FIELD_META_DEFAULT_VALUES: Record<FieldType, TFieldMetaSchema> = {
+export const FIELD_IMAGE_UPLOAD_META_DEFAULT_VALUES: TImageUploadFieldMeta = {
+  type: 'IMAGE_UPLOAD',
+  fontSize: DEFAULT_FIELD_FONT_SIZE,
+  textAlign: FIELD_DEFAULT_GENERIC_ALIGN,
+};
+
+export const FIELD_FREE_SIGNATURE_META_DEFAULT_VALUES: TFreeSignatureFieldMeta = {
+  type: 'FREE_SIGNATURE',
+  fontSize: DEFAULT_FIELD_FONT_SIZE,
+  textAlign: FIELD_DEFAULT_GENERIC_ALIGN,
+};
+
+export const FIELD_META_DEFAULT_VALUES = {
   [FieldType.SIGNATURE]: FIELD_SIGNATURE_META_DEFAULT_VALUES,
-  [FieldType.FREE_SIGNATURE]: undefined,
+  ['IMAGE_UPLOAD' as any]: FIELD_IMAGE_UPLOAD_META_DEFAULT_VALUES,
+  [FieldType.FREE_SIGNATURE]: FIELD_FREE_SIGNATURE_META_DEFAULT_VALUES,
   [FieldType.INITIALS]: FIELD_INITIALS_META_DEFAULT_VALUES,
   [FieldType.NAME]: FIELD_NAME_META_DEFAULT_VALUES,
   [FieldType.EMAIL]: FIELD_EMAIL_META_DEFAULT_VALUES,
@@ -398,52 +435,56 @@ export const FIELD_META_DEFAULT_VALUES: Record<FieldType, TFieldMetaSchema> = {
   [FieldType.RADIO]: FIELD_RADIO_META_DEFAULT_VALUES,
   [FieldType.CHECKBOX]: FIELD_CHECKBOX_META_DEFAULT_VALUES,
   [FieldType.DROPDOWN]: FIELD_DROPDOWN_META_DEFAULT_VALUES,
-} as const;
+} as Record<FieldType, TFieldMetaSchema>;
 
 export const ZEnvelopeFieldAndMetaSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal(FieldType.SIGNATURE),
-    fieldMeta: ZSignatureFieldMeta.optional().default(FIELD_SIGNATURE_META_DEFAULT_VALUES),
+    fieldMeta: ZSignatureFieldMeta.nullable().optional().default(FIELD_SIGNATURE_META_DEFAULT_VALUES),
   }),
   z.object({
-    type: z.literal(FieldType.FREE_SIGNATURE),
-    fieldMeta: z.undefined(),
+    type: z.literal('IMAGE_UPLOAD'),
+    fieldMeta: ZImageUploadFieldMeta.nullable().optional().default(FIELD_IMAGE_UPLOAD_META_DEFAULT_VALUES),
+  }),
+  z.object({
+    type: z.literal('FREE_SIGNATURE'),
+    fieldMeta: ZFreeSignatureFieldMeta.nullable().optional().default(FIELD_FREE_SIGNATURE_META_DEFAULT_VALUES),
   }),
   z.object({
     type: z.literal(FieldType.INITIALS),
-    fieldMeta: ZInitialsFieldMeta.optional().default(FIELD_INITIALS_META_DEFAULT_VALUES),
+    fieldMeta: ZInitialsFieldMeta.nullable().optional().default(FIELD_INITIALS_META_DEFAULT_VALUES),
   }),
   z.object({
     type: z.literal(FieldType.NAME),
-    fieldMeta: ZNameFieldMeta.optional().default(FIELD_NAME_META_DEFAULT_VALUES),
+    fieldMeta: ZNameFieldMeta.nullable().optional().default(FIELD_NAME_META_DEFAULT_VALUES),
   }),
   z.object({
     type: z.literal(FieldType.EMAIL),
-    fieldMeta: ZEmailFieldMeta.optional().default(FIELD_EMAIL_META_DEFAULT_VALUES),
+    fieldMeta: ZEmailFieldMeta.nullable().optional().default(FIELD_EMAIL_META_DEFAULT_VALUES),
   }),
   z.object({
     type: z.literal(FieldType.DATE),
-    fieldMeta: ZDateFieldMeta.optional().default(FIELD_DATE_META_DEFAULT_VALUES),
+    fieldMeta: ZDateFieldMeta.nullable().optional().default(FIELD_DATE_META_DEFAULT_VALUES),
   }),
   z.object({
     type: z.literal(FieldType.TEXT),
-    fieldMeta: ZTextFieldMeta.optional().default(FIELD_TEXT_META_DEFAULT_VALUES),
+    fieldMeta: ZTextFieldMeta.nullable().optional().default(FIELD_TEXT_META_DEFAULT_VALUES),
   }),
   z.object({
     type: z.literal(FieldType.NUMBER),
-    fieldMeta: ZNumberFieldMeta.optional().default(FIELD_NUMBER_META_DEFAULT_VALUES),
+    fieldMeta: ZNumberFieldMeta.nullable().optional().default(FIELD_NUMBER_META_DEFAULT_VALUES),
   }),
   z.object({
     type: z.literal(FieldType.RADIO),
-    fieldMeta: ZRadioFieldMeta.optional().default(FIELD_RADIO_META_DEFAULT_VALUES),
+    fieldMeta: ZRadioFieldMeta.nullable().optional().default(FIELD_RADIO_META_DEFAULT_VALUES),
   }),
   z.object({
     type: z.literal(FieldType.CHECKBOX),
-    fieldMeta: ZCheckboxFieldMeta.optional().default(FIELD_CHECKBOX_META_DEFAULT_VALUES),
+    fieldMeta: ZCheckboxFieldMeta.nullable().optional().default(FIELD_CHECKBOX_META_DEFAULT_VALUES),
   }),
   z.object({
     type: z.literal(FieldType.DROPDOWN),
-    fieldMeta: ZDropdownFieldMeta.optional().default(FIELD_DROPDOWN_META_DEFAULT_VALUES),
+    fieldMeta: ZDropdownFieldMeta.nullable().optional().default(FIELD_DROPDOWN_META_DEFAULT_VALUES),
   }),
 ]);
 

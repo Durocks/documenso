@@ -55,7 +55,7 @@ export const parseFieldTypeFromPlaceholder = (fieldTypeString: string): FieldTyp
 
   return match(normalizedType)
     .with('SIGNATURE', () => FieldType.SIGNATURE)
-    .with('FREE_SIGNATURE', () => FieldType.FREE_SIGNATURE)
+    .with('IMAGE_UPLOAD', () => FieldType.IMAGE_UPLOAD)
     .with('INITIALS', () => FieldType.INITIALS)
     .with('NAME', () => FieldType.NAME)
     .with('EMAIL', () => FieldType.EMAIL)
@@ -81,7 +81,7 @@ export const parseFieldMetaFromPlaceholder = (
   rawFieldMeta: Record<string, string>,
   fieldType: FieldType,
 ): Record<string, unknown> | undefined => {
-  if (fieldType === FieldType.SIGNATURE || fieldType === FieldType.FREE_SIGNATURE) {
+  if (fieldType === FieldType.SIGNATURE || fieldType === FieldType.IMAGE_UPLOAD) {
     return;
   }
 

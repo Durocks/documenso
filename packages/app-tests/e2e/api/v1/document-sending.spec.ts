@@ -280,7 +280,7 @@ test.describe('Document API', () => {
     expect(response.status()).toBe(200);
   });
 
-  test('sendDocument: should succeed when signer has FREE_SIGNATURE field', async ({ request }) => {
+  test('sendDocument: should succeed when signer has IMAGE_UPLOAD field', async ({ request }) => {
     const { user, team } = await seedUser();
 
     // Create a blank document and get it with envelope items
@@ -301,10 +301,10 @@ test.describe('Document API', () => {
       },
     });
 
-    // Add a FREE_SIGNATURE field
+    // Add an IMAGE_UPLOAD field
     await prisma.field.create({
       data: {
-        type: FieldType.FREE_SIGNATURE,
+        type: FieldType.IMAGE_UPLOAD,
         page: 1,
         positionX: 100,
         positionY: 100,

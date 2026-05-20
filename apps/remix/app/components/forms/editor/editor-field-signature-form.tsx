@@ -1,20 +1,22 @@
 import { DEFAULT_SIGNATURE_TEXT_FONT_SIZE } from '@documenso/lib/constants/pdf';
 import {
+  FIELD_DEFAULT_GENERIC_ALIGN,
   FIELD_SIGNATURE_META_DEFAULT_VALUES,
   type TSignatureFieldMeta,
   ZSignatureFieldMeta,
 } from '@documenso/lib/types/field-meta';
 import { Form } from '@documenso/ui/primitives/form/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import type { z } from 'zod';
 
-import { EditorGenericFontSizeField } from './editor-field-generic-field-forms';
+import { EditorGenericFontSizeField, EditorGenericTextAlignField } from './editor-field-generic-field-forms';
 
 const ZSignatureFieldFormSchema = ZSignatureFieldMeta.pick({
   fontSize: true,
+  textAlign: true,
   overflow: true,
 });
 
@@ -37,10 +39,12 @@ export const EditorFieldSignatureForm = ({
     defaultValues: {
       overflow: value.overflow || FIELD_SIGNATURE_META_DEFAULT_VALUES.overflow,
       fontSize: value.fontSize || DEFAULT_SIGNATURE_TEXT_FONT_SIZE,
+      textAlign: value.textAlign ?? FIELD_DEFAULT_GENERIC_ALIGN,
     },
   });
 
   const { control } = form;
+  const { t } = useLingui();
 
   const formValues = useWatch({
     control,
@@ -66,6 +70,13 @@ export const EditorFieldSignatureForm = ({
             <EditorGenericFontSizeField formControl={form.control} />
             <p className="mt-0.5 text-muted-foreground text-xs">
               <Trans>The typed signature font size</Trans>
+            </p>
+          </div>
+
+          <div>
+            <EditorGenericTextAlignField formControl={form.control} label={t`Alignment`} />
+            <p className="mt-0.5 text-muted-foreground text-xs">
+              <Trans>How the signature aligns in the field</Trans>
             </p>
           </div>
         </fieldset>

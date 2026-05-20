@@ -198,7 +198,7 @@ export default function SigningCertificate({ loaderData }: Route.ComponentProps)
   const getRecipientSignatureField = (recipientId: number) => {
     return document.recipients
       .find((recipient) => recipient.id === recipientId)
-      ?.fields.find((field) => field.type === FieldType.SIGNATURE || field.type === FieldType.FREE_SIGNATURE);
+      ?.fields.find((field) => field.type === FieldType.SIGNATURE || field.type === FieldType.IMAGE_UPLOAD);
   };
 
   return (

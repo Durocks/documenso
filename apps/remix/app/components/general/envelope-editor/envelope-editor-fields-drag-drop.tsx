@@ -12,6 +12,9 @@ import { FRIENDLY_FIELD_TYPE } from '@documenso/ui/primitives/document-flow/type
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { FieldType } from '@prisma/client';
+
+type ExtendedFieldType = FieldType | 'IMAGE_UPLOAD';
+
 import {
   CalendarIcon,
   CheckSquareIcon,
@@ -20,6 +23,7 @@ import {
   HashIcon,
   ListIcon,
   MailIcon,
+  StampIcon,
   TextIcon,
   UserIcon,
 } from 'lucide-react';
@@ -31,12 +35,22 @@ const MIN_WIDTH_PX = 36;
 const DEFAULT_HEIGHT_PX = MIN_HEIGHT_PX * 2.5;
 const DEFAULT_WIDTH_PX = MIN_WIDTH_PX * 2.5;
 
-export const fieldButtonList = [
+export const fieldButtonList: {
+  type: ExtendedFieldType;
+  icon: any;
+  name: any;
+  className?: string;
+}[] = [
   {
     type: FieldType.SIGNATURE,
     icon: SignatureIcon,
     name: msg`Signature`,
     className: 'font-signature text-lg',
+  },
+  {
+    type: 'IMAGE_UPLOAD',
+    icon: StampIcon,
+    name: msg`Image Upload`,
   },
   {
     type: FieldType.EMAIL,
@@ -98,7 +112,7 @@ export const EnvelopeEditorFieldDragDrop = ({
 
   const { t } = useLingui();
 
-  const [selectedField, setSelectedField] = useState<FieldType | null>(null);
+  const [selectedField, setSelectedField] = useState<ExtendedFieldType | null>(null);
 
   const { isWithinPageBounds, getPage } = useDocumentElement();
 
@@ -185,10 +199,10 @@ export const EnvelopeEditorFieldDragDrop = ({
         width: fieldPageWidth,
         height: fieldPageHeight,
         recipientId: selectedRecipientId,
-        fieldMeta: structuredClone(FIELD_META_DEFAULT_VALUES[selectedField]),
+        fieldMeta: structuredClone(FIELD_META_DEFAULT_VALUES[selectedField as any]),
       };
 
-      editorFields.addField(field);
+      editorFields.addField(field as any);
 
       setIsFieldWithinBounds(false);
       setSelectedField(null);
@@ -285,7 +299,7 @@ export const EnvelopeEditorFieldDragDrop = ({
             width: fieldBounds.current.width,
           }}
         >
-          <span className="text-[clamp(0.425rem,25cqw,0.825rem)]">{t(FRIENDLY_FIELD_TYPE[selectedField])}</span>
+          <span className="text-[clamp(0.425rem,25cqw,0.825rem)]">{t(FRIENDLY_FIELD_TYPE[selectedField as any])}</span>
         </div>
       )}
     </>

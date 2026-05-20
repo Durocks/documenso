@@ -53,6 +53,18 @@ export const EnvelopeEditorFieldsPageRenderer = ({ pageData }: { pageData: PageR
     [editorFields.localFields, pageNumber, currentEnvelopeItem?.id],
   );
 
+  useEffect(() => {
+    if (!pageLayer.current) {
+      return;
+    }
+
+    for (const field of localPageFields) {
+      renderFieldOnLayer(field);
+    }
+
+    pageLayer.current.batchDraw();
+  }, [localPageFields, pageLayer]);
+
   const handleResizeOrMove = (event: KonvaEventObject<Event>) => {
     const isDragEvent = event.type === 'dragend';
 
@@ -118,7 +130,7 @@ export const EnvelopeEditorFieldsPageRenderer = ({ pageData }: { pageData: PageR
       field: {
         renderId: field.formId,
         ...field,
-        customText: '',
+        customText: field.customText ?? '',
         inserted: false,
         fieldMeta: field.fieldMeta,
       },

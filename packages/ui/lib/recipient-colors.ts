@@ -16,14 +16,14 @@ export type RecipientColorStyles = {
   comboBoxItem: string;
 };
 
-export const DEFAULT_RECT_BACKGROUND = 'rgba(255, 255, 255, 0.95)';
+export const DEFAULT_RECT_BACKGROUND = 'rgba(255, 255, 255, 0.3)';
 
 // !: values of the declared variable to do all the background, border and shadow styles.
 const RECIPIENT_COLOR_STYLES: Record<TRecipientColor, () => RecipientColorStyles> = {
   readOnly: (): RecipientColorStyles => ({
     base: 'ring-neutral-400',
     baseRing: 'rgba(176, 176, 176, 1)',
-    baseRingHover: 'rgba(176, 176, 176, 1)',
+    baseRingHover: 'rgba(255, 255, 255, 1)',
     baseTextHover: 'rgba(176, 176, 176, 1)',
     fieldButton: 'border-neutral-400 hover:border-neutral-400',
     fieldButtonText: '',
@@ -52,7 +52,7 @@ const generateStyles = (recipientColor: TRecipientColor): RecipientColorStyles =
   return {
     base: `${ring}-${name} ${hover}:${bg}-${name}/30`,
     baseRing: color.toRgbString(),
-    baseRingHover: color.alpha(0.3).toRgbString(),
+    baseRingHover: 'rgba(255, 255, 255, 1)',
     baseTextHover: color.toRgbString(),
     fieldButton: `${hover}:${border}-${name} ${hover}:${bg}-${name}/30`,
     fieldButtonText: `${groupHover}:${text}-${name}`,

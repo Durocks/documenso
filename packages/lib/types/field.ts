@@ -116,9 +116,12 @@ export const ZFieldSignatureSchema = BaseFieldSchemaUsingNumbers.extend({
 
 export type TFieldSignature = z.infer<typeof ZFieldSignatureSchema>;
 
-export const ZFieldFreeSignatureSchema = ZFieldSignatureSchema;
+export const ZFieldImageUploadSchema = BaseFieldSchemaUsingNumbers.extend({
+  type: z.literal('IMAGE_UPLOAD'),
+  fieldMeta: z.undefined().catch(undefined),
+});
 
-export type TFieldFreeSignature = z.infer<typeof ZFieldFreeSignatureSchema>;
+export type TFieldImageUpload = z.infer<typeof ZFieldImageUploadSchema>;
 
 export const ZFieldInitialsSchema = BaseFieldSchemaUsingNumbers.extend({
   type: z.literal(FieldType.INITIALS),
@@ -182,6 +185,7 @@ export type TFieldDropdown = z.infer<typeof ZFieldDropdownSchema>;
 export const ZFullFieldSchema = z.discriminatedUnion('type', [
   ZFieldTextSchema,
   ZFieldSignatureSchema,
+  ZFieldImageUploadSchema,
   ZFieldInitialsSchema,
   ZFieldNameSchema,
   ZFieldEmailSchema,

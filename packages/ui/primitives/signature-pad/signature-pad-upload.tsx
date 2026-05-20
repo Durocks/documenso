@@ -43,7 +43,7 @@ const loadImageOntoCanvas = (
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
 ): ImageData => {
-  const scale = Math.min((canvas.width * 0.8) / image.width, (canvas.height * 0.8) / image.height);
+  const scale = Math.min(canvas.width / image.width, canvas.height / image.height);
 
   const x = (canvas.width - image.width * scale) / 2;
   const y = (canvas.height - image.height * scale) / 2;
@@ -70,11 +70,14 @@ export type SignaturePadUploadProps = {
 };
 
 export const SignaturePadUpload = ({ className, value, onChange, ...props }: SignaturePadUploadProps) => {
+  console.log('SignaturePadUpload: Component mounted');
   const $el = useRef<HTMLCanvasElement>(null);
   const $imageData = useRef<ImageData | null>(null);
+  const inputId = `signature-upload-${Math.random().toString(36).substr(2, 9)}`;
   const $fileInput = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('SignaturePadUpload: handleImageUpload triggered', event.target.files);
     try {
       const img = await loadImage(event.target.files?.[0]);
 
@@ -121,23 +124,28 @@ export const SignaturePadUpload = ({ className, value, onChange, ...props }: Sig
   });
 
   return (
-    <div className={cn('relative h-full w-full', className)}>
+    <div
+      className={cn('relative h-full w-full', className)}
+      onClick={() => console.log('SignaturePadUpload: Outer div clicked')}
+    >
       <canvas
         data-testid="signature-pad-upload"
         ref={$el}
         className="h-full w-full dark:hue-rotate-180 dark:invert"
         style={{ touchAction: 'none' }}
+        onClick={() => console.log('SignaturePadUpload: Canvas clicked')}
         {...props}
       />
 
       <input ref={$fileInput} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
 
-      <motion.button
-        className="absolute inset-0 flex h-full w-full items-center justify-center"
-        initial="initial"
-        animate="animate"
-        whileHover="hover"
-        onClick={() => $fileInput.current?.click()}
+      <div
+        className="absolute inset-0 z-50 flex h-full w-full cursor-pointer items-center justify-center bg-red-500/20"
+        onClick={(e) => {
+          console.log('SignaturePadUpload: Trigger div clicked');
+          e.stopPropagation();
+          $fileInput.current?.click();
+        }}
       >
         {!value && (
           <motion.div>
@@ -151,7 +159,7 @@ export const SignaturePadUpload = ({ className, value, onChange, ...props }: Sig
             </div>
           </motion.div>
         )}
-      </motion.button>
+      </div>
     </div>
   );
 };

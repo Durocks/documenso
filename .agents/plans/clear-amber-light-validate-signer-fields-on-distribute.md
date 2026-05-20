@@ -50,7 +50,7 @@ The API allowed distributing documents/envelopes even when signers had no signat
 
 ### 5. Consolidate `hasSignatureField` checks
 
-Updated to use `isSignatureFieldType` guard (checks both `SIGNATURE` and `FREE_SIGNATURE`):
+Updated to use `isSignatureFieldType` guard (checks both `SIGNATURE` and `IMAGE_UPLOAD`):
 
 - `apps/remix/app/components/general/document-signing/document-signing-form.tsx`
 - `apps/remix/app/components/general/envelope-signing/envelope-signer-form.tsx`
@@ -70,7 +70,7 @@ Updated to use `isSignatureFieldType` guard (checks both `SIGNATURE` and `FREE_S
 - Distribution fails when signer has no fields
 - Distribution fails when signer has only non-signature fields
 - Distribution succeeds with SIGNATURE field
-- Distribution succeeds with FREE_SIGNATURE field (v1 only via Prisma)
+- Distribution succeeds with IMAGE_UPLOAD field (v1 only via Prisma)
 - Distribution succeeds when VIEWER/CC/APPROVER have no fields
 - Distribution fails when one of multiple signers is missing signature field
 - Distribution succeeds when all signers have signature fields

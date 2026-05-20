@@ -8,6 +8,7 @@ import type { TFieldMetaSchema } from '../../types/field-meta';
 import { renderCheckboxFieldElement } from './render-checkbox-field';
 import { renderDropdownFieldElement } from './render-dropdown-field';
 import { renderGenericTextFieldElement } from './render-generic-text-field';
+import { renderImageUploadFieldElement } from './render-image-upload-field';
 import { renderRadioFieldElement } from './render-radio-field';
 import { renderSignatureFieldElement } from './render-signature-field';
 
@@ -77,6 +78,10 @@ export const renderField = ({
   };
 
   // If the generic text field element array changes, update the `GenericTextFieldTypeMetas` type
+  console.log('DEBUG: renderField field.type:', field.type);
+  console.log('DEBUG: renderField FieldType.IMAGE_UPLOAD:', FieldType.IMAGE_UPLOAD);
+  console.log('DEBUG: renderField FieldType.FREE_SIGNATURE:', FieldType.FREE_SIGNATURE);
+
   return match(field.type)
     .with(FieldType.INITIALS, FieldType.NAME, FieldType.EMAIL, FieldType.DATE, FieldType.TEXT, FieldType.NUMBER, () =>
       renderGenericTextFieldElement(field, options),
@@ -84,9 +89,7 @@ export const renderField = ({
     .with(FieldType.CHECKBOX, () => renderCheckboxFieldElement(field, options))
     .with(FieldType.RADIO, () => renderRadioFieldElement(field, options))
     .with(FieldType.DROPDOWN, () => renderDropdownFieldElement(field, options))
-    .with(FieldType.SIGNATURE, () => renderSignatureFieldElement(field, options))
-    .with(FieldType.FREE_SIGNATURE, () => {
-      throw new Error('Free signature fields are not supported');
-    })
+    .with(FieldType.SIGNATURE, FieldType.FREE_SIGNATURE, () => renderSignatureFieldElement(field, options))
+    .with('IMAGE_UPLOAD', () => renderImageUploadFieldElement(field, options))
     .exhaustive();
 };

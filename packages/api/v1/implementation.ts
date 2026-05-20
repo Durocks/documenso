@@ -1397,13 +1397,8 @@ export const ApiContractV1Implementation = tsr.router(ApiContractV1, {
               .with('DROPDOWN', () => ZDropdownFieldMeta.safeParse(fieldMeta))
               .with('NUMBER', () => ZNumberFieldMeta.safeParse(fieldMeta))
               .with('TEXT', () => ZTextFieldMeta.safeParse(fieldMeta))
-              .with('SIGNATURE', 'INITIALS', 'DATE', 'EMAIL', 'NAME', () => ({
+              .with('SIGNATURE', 'INITIALS', 'DATE', 'EMAIL', 'NAME', 'IMAGE_UPLOAD', () => ({
                 success: true,
-                data: undefined,
-              }))
-              .with('FREE_SIGNATURE', () => ({
-                success: false,
-                error: 'FREE_SIGNATURE is not supported',
                 data: undefined,
               }))
               .exhaustive();

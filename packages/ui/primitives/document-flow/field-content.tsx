@@ -144,7 +144,7 @@ export const FieldContent = ({ field, documentMeta }: FieldIconProps) => {
   const labelToDisplay = fieldMeta?.label || _(FRIENDLY_FIELD_TYPE[type]) || '';
   let textToDisplay: string | undefined;
 
-  const isSignatureField = field.type === FieldType.SIGNATURE || field.type === FieldType.FREE_SIGNATURE;
+  const isSignatureField = field.type === FieldType.SIGNATURE || field.type === FieldType.IMAGE_UPLOAD;
 
   if (field.type === FieldType.TEXT && field.fieldMeta?.type === 'text' && field.fieldMeta?.text) {
     textToDisplay = field.fieldMeta.text;
