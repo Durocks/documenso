@@ -29,7 +29,8 @@ const createFieldImageUpload = (field: FieldToRender, options: RenderFieldElemen
 
   const fieldTypeName = translations?.[field.type as any] || 'Image Upload';
 
-  const textToRender: string = field.customText || fieldTypeName;
+  // For image upload fields, prioritize the custom label over customText
+  const textToRender: string = field.fieldMeta?.label || field.customText || fieldTypeName;
 
   const signature = field.signature;
 

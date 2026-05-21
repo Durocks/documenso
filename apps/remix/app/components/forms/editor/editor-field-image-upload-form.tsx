@@ -4,14 +4,14 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const ZFreeSignatureFormSchema = z.object({
+const ZImageUploadFormSchema = z.object({
   label: z.string().optional(),
   textAlign: z.enum(['left', 'center', 'right']).optional(),
 });
 
-type TFreeSignatureFormSchema = z.infer<typeof ZFreeSignatureFormSchema>;
+type TImageUploadFormSchema = z.infer<typeof ZImageUploadFormSchema>;
 
-type EditorFieldFreeSignatureFormProps = {
+type EditorFieldImageUploadFormProps = {
   label: string | null;
   textAlign: string | undefined;
   onLabelChange: (value: string) => void;
@@ -20,14 +20,14 @@ type EditorFieldFreeSignatureFormProps = {
 
 import { EditorGenericLabelField, EditorGenericTextAlignField } from './editor-field-generic-field-forms';
 
-export const EditorFieldFreeSignatureForm = ({
+export const EditorFieldImageUploadForm = ({
   label,
   textAlign,
   onLabelChange,
   onTextAlignChange,
-}: EditorFieldFreeSignatureFormProps) => {
-  const form = useForm<TFreeSignatureFormSchema>({
-    resolver: zodResolver(ZFreeSignatureFormSchema),
+}: EditorFieldImageUploadFormProps) => {
+  const form = useForm<TImageUploadFormSchema>({
+    resolver: zodResolver(ZImageUploadFormSchema),
     mode: 'onChange',
     defaultValues: {
       label: label || '',

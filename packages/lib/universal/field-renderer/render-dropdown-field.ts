@@ -53,7 +53,7 @@ export const renderDropdownFieldElement = (field: FieldToRender, options: Render
 
   const dropdownMeta: TDropdownFieldMeta | null = (field.fieldMeta as TDropdownFieldMeta) || null;
 
-  let selectedValue = translations?.[FieldType.DROPDOWN] || 'Select Option';
+  let selectedValue = field.fieldMeta?.label || translations?.[FieldType.DROPDOWN] || 'Select Option';
 
   const isFirstRender = !pageLayer.findOne(`#${field.renderId}`);
 

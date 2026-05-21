@@ -146,6 +146,11 @@ export const FieldContent = ({ field, documentMeta }: FieldIconProps) => {
 
   const isSignatureField = field.type === FieldType.SIGNATURE || field.type === FieldType.IMAGE_UPLOAD;
 
+  // For image upload fields, prioritize the custom label over customText
+  if (field.type === FieldType.IMAGE_UPLOAD && field.fieldMeta?.label) {
+    textToDisplay = field.fieldMeta.label;
+  }
+
   if (field.type === FieldType.TEXT && field.fieldMeta?.type === 'text' && field.fieldMeta?.text) {
     textToDisplay = field.fieldMeta.text;
   }

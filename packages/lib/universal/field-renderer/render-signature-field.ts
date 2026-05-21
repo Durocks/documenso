@@ -144,7 +144,7 @@ const createFieldSignature = (field: FieldToRender, options: RenderFieldElementO
   const textX = 0;
   const textY = 0;
 
-  let textToRender: string = field.customText || fieldTypeName;
+  let textToRender: string = field.customText || field.fieldMeta?.label || fieldTypeName;
 
   const signature = field.signature;
 

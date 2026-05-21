@@ -77,11 +77,6 @@ export const renderField = ({
     scale,
   };
 
-  // If the generic text field element array changes, update the `GenericTextFieldTypeMetas` type
-  console.log('DEBUG: renderField field.type:', field.type);
-  console.log('DEBUG: renderField FieldType.IMAGE_UPLOAD:', FieldType.IMAGE_UPLOAD);
-  console.log('DEBUG: renderField FieldType.FREE_SIGNATURE:', FieldType.FREE_SIGNATURE);
-
   return match(field.type)
     .with(FieldType.INITIALS, FieldType.NAME, FieldType.EMAIL, FieldType.DATE, FieldType.TEXT, FieldType.NUMBER, () =>
       renderGenericTextFieldElement(field, options),

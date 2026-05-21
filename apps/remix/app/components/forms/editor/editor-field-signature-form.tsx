@@ -12,9 +12,14 @@ import { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import type { z } from 'zod';
 
-import { EditorGenericFontSizeField, EditorGenericTextAlignField } from './editor-field-generic-field-forms';
+import {
+  EditorGenericFontSizeField,
+  EditorGenericLabelField,
+  EditorGenericTextAlignField,
+} from './editor-field-generic-field-forms';
 
 const ZSignatureFieldFormSchema = ZSignatureFieldMeta.pick({
+  label: true,
   fontSize: true,
   textAlign: true,
   overflow: true,
@@ -37,6 +42,7 @@ export const EditorFieldSignatureForm = ({
     resolver: zodResolver(ZSignatureFieldFormSchema),
     mode: 'onChange',
     defaultValues: {
+      label: value.label || '',
       overflow: value.overflow || FIELD_SIGNATURE_META_DEFAULT_VALUES.overflow,
       fontSize: value.fontSize || DEFAULT_SIGNATURE_TEXT_FONT_SIZE,
       textAlign: value.textAlign ?? FIELD_DEFAULT_GENERIC_ALIGN,
@@ -66,6 +72,10 @@ export const EditorFieldSignatureForm = ({
     <Form {...form}>
       <form>
         <fieldset className="flex flex-col gap-2">
+          <div>
+            <EditorGenericLabelField formControl={form.control} />
+          </div>
+
           <div>
             <EditorGenericFontSizeField formControl={form.control} />
             <p className="mt-0.5 text-muted-foreground text-xs">

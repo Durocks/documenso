@@ -331,6 +331,7 @@ export const FIELD_DATE_META_DEFAULT_VALUES: TDateFieldMeta = {
   type: 'date',
   fontSize: DEFAULT_FIELD_FONT_SIZE,
   textAlign: 'left',
+  label: '',
   overflow: DEFAULT_DATE_OVERFLOW_MODE,
 };
 
@@ -359,24 +360,28 @@ export const FIELD_INITIALS_META_DEFAULT_VALUES: TInitialsFieldMeta = {
   type: 'initials',
   fontSize: DEFAULT_FIELD_FONT_SIZE,
   textAlign: 'left',
+  label: '',
 };
 
 export const FIELD_NAME_META_DEFAULT_VALUES: TNameFieldMeta = {
   type: 'name',
   fontSize: DEFAULT_FIELD_FONT_SIZE,
   textAlign: 'left',
+  label: '',
 };
 
 export const FIELD_EMAIL_META_DEFAULT_VALUES: TEmailFieldMeta = {
   type: 'email',
   fontSize: DEFAULT_FIELD_FONT_SIZE,
   textAlign: 'left',
+  label: '',
   overflow: DEFAULT_EMAIL_OVERFLOW_MODE,
 };
 
 export const FIELD_RADIO_META_DEFAULT_VALUES: TRadioFieldMeta = {
   type: 'radio',
   fontSize: DEFAULT_FIELD_FONT_SIZE,
+  label: '',
   values: [{ id: 1, checked: false, value: '' }],
   required: false,
   readOnly: false,
@@ -386,6 +391,7 @@ export const FIELD_RADIO_META_DEFAULT_VALUES: TRadioFieldMeta = {
 export const FIELD_CHECKBOX_META_DEFAULT_VALUES: TCheckboxFieldMeta = {
   type: 'checkbox',
   fontSize: DEFAULT_FIELD_FONT_SIZE,
+  label: '',
   values: [{ id: 1, checked: false, value: '' }],
   validationRule: '',
   validationLength: 0,
@@ -397,6 +403,7 @@ export const FIELD_CHECKBOX_META_DEFAULT_VALUES: TCheckboxFieldMeta = {
 export const FIELD_DROPDOWN_META_DEFAULT_VALUES: TDropdownFieldMeta = {
   type: 'dropdown',
   fontSize: DEFAULT_FIELD_FONT_SIZE,
+  label: '',
   values: [{ value: 'Option 1' }],
   defaultValue: '',
   required: false,
@@ -407,24 +414,27 @@ export const FIELD_SIGNATURE_META_DEFAULT_VALUES: TSignatureFieldMeta = {
   type: 'signature',
   fontSize: DEFAULT_SIGNATURE_TEXT_FONT_SIZE,
   textAlign: FIELD_DEFAULT_GENERIC_ALIGN,
+  label: '',
   overflow: DEFAULT_SIGNATURE_OVERFLOW_MODE,
 };
 
 export const FIELD_IMAGE_UPLOAD_META_DEFAULT_VALUES: TImageUploadFieldMeta = {
   type: 'IMAGE_UPLOAD',
   fontSize: DEFAULT_FIELD_FONT_SIZE,
-  textAlign: FIELD_DEFAULT_GENERIC_ALIGN,
+  textAlign: 'center',
+  label: '',
 };
 
 export const FIELD_FREE_SIGNATURE_META_DEFAULT_VALUES: TFreeSignatureFieldMeta = {
   type: 'FREE_SIGNATURE',
   fontSize: DEFAULT_FIELD_FONT_SIZE,
   textAlign: FIELD_DEFAULT_GENERIC_ALIGN,
+  label: '',
 };
 
 export const FIELD_META_DEFAULT_VALUES = {
   [FieldType.SIGNATURE]: FIELD_SIGNATURE_META_DEFAULT_VALUES,
-  ['IMAGE_UPLOAD' as any]: FIELD_IMAGE_UPLOAD_META_DEFAULT_VALUES,
+  [FieldType.IMAGE_UPLOAD]: FIELD_IMAGE_UPLOAD_META_DEFAULT_VALUES,
   [FieldType.FREE_SIGNATURE]: FIELD_FREE_SIGNATURE_META_DEFAULT_VALUES,
   [FieldType.INITIALS]: FIELD_INITIALS_META_DEFAULT_VALUES,
   [FieldType.NAME]: FIELD_NAME_META_DEFAULT_VALUES,

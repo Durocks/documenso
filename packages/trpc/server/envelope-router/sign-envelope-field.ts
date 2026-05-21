@@ -254,7 +254,7 @@ export const signEnvelopeFieldRoute = procedure
             recipientRole: recipient.role,
             fieldId: updatedField.secondaryId,
             field: match(updatedField.type)
-              .with(FieldType.SIGNATURE, FieldType.IMAGE_UPLOAD, (type) => ({
+              .with(FieldType.SIGNATURE, FieldType.FREE_SIGNATURE, FieldType.IMAGE_UPLOAD, (type) => ({
                 type,
                 data: signatureImageAsBase64 || typedSignature || '',
               }))

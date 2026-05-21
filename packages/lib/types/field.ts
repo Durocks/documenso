@@ -8,6 +8,7 @@ import {
   ZDateFieldMeta,
   ZDropdownFieldMeta,
   ZEmailFieldMeta,
+  ZImageUploadFieldMeta,
   ZInitialsFieldMeta,
   ZNameFieldMeta,
   ZNumberFieldMeta,
@@ -118,7 +119,7 @@ export type TFieldSignature = z.infer<typeof ZFieldSignatureSchema>;
 
 export const ZFieldImageUploadSchema = BaseFieldSchemaUsingNumbers.extend({
   type: z.literal('IMAGE_UPLOAD'),
-  fieldMeta: z.undefined().catch(undefined),
+  fieldMeta: ZImageUploadFieldMeta.nullable().optional(),
 });
 
 export type TFieldImageUpload = z.infer<typeof ZFieldImageUploadSchema>;

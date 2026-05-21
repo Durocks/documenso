@@ -42,6 +42,7 @@ import { EditorFieldDateForm } from '~/components/forms/editor/editor-field-date
 import { EditorFieldDropdownForm } from '~/components/forms/editor/editor-field-dropdown-form';
 import { EditorFieldEmailForm } from '~/components/forms/editor/editor-field-email-form';
 import { EditorFieldFreeSignatureForm } from '~/components/forms/editor/editor-field-free-signature-form';
+import { EditorFieldImageUploadForm } from '~/components/forms/editor/editor-field-image-upload-form';
 import { EditorFieldInitialsForm } from '~/components/forms/editor/editor-field-initials-form';
 import { EditorFieldNameForm } from '~/components/forms/editor/editor-field-name-form';
 import { EditorFieldNumberForm } from '~/components/forms/editor/editor-field-number-form';
@@ -58,17 +59,17 @@ import { EnvelopeRecipientSelector } from './envelope-recipient-selector';
 
 const FieldSettingsTypeTranslations: Record<string, MessageDescriptor> = {
   [FieldType.SIGNATURE]: msg`Signature Settings`,
+  [FieldType.IMAGE_UPLOAD]: msg`Image Upload Settings`,
   [FieldType.FREE_SIGNATURE]: msg`Free Signature Settings`,
-  IMAGE_UPLOAD: msg`Image Upload Settings`,
-  [FieldType.TEXT]: msg`Text Settings`,
-  [FieldType.DATE]: msg`Date Settings`,
-  [FieldType.EMAIL]: msg`Email Settings`,
-  [FieldType.NAME]: msg`Name Settings`,
   [FieldType.INITIALS]: msg`Initials Settings`,
-  [FieldType.NUMBER]: msg`Number Settings`,
-  [FieldType.RADIO]: msg`Radio Settings`,
-  [FieldType.CHECKBOX]: msg`Checkbox Settings`,
-  [FieldType.DROPDOWN]: msg`Dropdown Settings`,
+  [FieldType.NAME]: msg`Name Field Settings`,
+  [FieldType.EMAIL]: msg`Email Field Settings`,
+  [FieldType.DATE]: msg`Date Field Settings`,
+  [FieldType.TEXT]: msg`Text Field Settings`,
+  [FieldType.NUMBER]: msg`Number Field Settings`,
+  [FieldType.RADIO]: msg`Radio Field Settings`,
+  [FieldType.CHECKBOX]: msg`Checkbox Field Settings`,
+  [FieldType.DROPDOWN]: msg`Dropdown Field Settings`,
 };
 
 export const EnvelopeEditorFieldsPage = () => {
@@ -383,11 +384,14 @@ export const EnvelopeEditorFieldsPage = () => {
                     ))
                     .with(FieldType.FREE_SIGNATURE, () => (
                       <EditorFieldFreeSignatureForm
-                        customText={selectedField?.customText ?? null}
+                        label={(selectedField?.fieldMeta as any)?.label ?? null}
                         textAlign={(selectedField?.fieldMeta as any)?.textAlign}
-                        onCustomTextChange={(value) =>
+                        onLabelChange={(value) =>
                           editorFields.updateFieldByFormId(selectedField.formId, {
-                            customText: value,
+                            fieldMeta: {
+                              ...selectedField.fieldMeta,
+                              label: value,
+                            } as any,
                           })
                         }
                         onTextAlignChange={(value) =>
@@ -401,21 +405,22 @@ export const EnvelopeEditorFieldsPage = () => {
                       />
                     ))
                     .with('IMAGE_UPLOAD', () => (
-                      <EditorFieldFreeSignatureForm
-                        customText={selectedField?.customText ?? null}
+                      <EditorFieldImageUploadForm
+                        label={(selectedField?.fieldMeta as any)?.label ?? null}
                         textAlign={(selectedField?.fieldMeta as any)?.textAlign}
-                        onCustomTextChange={(value) =>
-                          editorFields.updateFieldByFormId(selectedField.formId, {
-                            customText: value,
-                          })
+                        onLabelChange={(value) =>
+                          updateSelectedFieldMeta({
+                            ...selectedField.fieldMeta,
+                            type: 'IMAGE_UPLOAD',
+                            label: value,
+                          } as any)
                         }
                         onTextAlignChange={(value) =>
-                          editorFields.updateFieldByFormId(selectedField.formId, {
-                            fieldMeta: {
-                              ...selectedField.fieldMeta,
-                              textAlign: value,
-                            } as any,
-                          })
+                          updateSelectedFieldMeta({
+                            ...selectedField.fieldMeta,
+                            type: 'IMAGE_UPLOAD',
+                            textAlign: value,
+                          } as any)
                         }
                       />
                     ))

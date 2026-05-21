@@ -159,16 +159,22 @@ export const EnvelopeEditorFieldDragDrop = ({
 
   const onMouseClick = useCallback(
     (event: MouseEvent) => {
+      console.log('[DragDrop] onMouseClick triggered', { selectedField, selectedRecipientId, selectedEnvelopeItemId });
       if (!selectedField || !selectedRecipientId || !selectedEnvelopeItemId) {
+        console.log('[DragDrop] Missing required values for placement');
         return;
       }
 
       const $page = getPage(event, PDF_VIEWER_PAGE_SELECTOR);
+      const withinBounds = isWithinPageBounds(
+        event,
+        PDF_VIEWER_PAGE_SELECTOR,
+        fieldBounds.current.width,
+        fieldBounds.current.height,
+      );
 
-      if (
-        !$page ||
-        !isWithinPageBounds(event, PDF_VIEWER_PAGE_SELECTOR, fieldBounds.current.width, fieldBounds.current.height)
-      ) {
+      if (!$page || !withinBounds) {
+        console.log('[DragDrop] Out of bounds or no page', { $page: !!$page, withinBounds });
         setSelectedField(null);
         return;
       }
@@ -202,7 +208,13 @@ export const EnvelopeEditorFieldDragDrop = ({
         fieldMeta: structuredClone(FIELD_META_DEFAULT_VALUES[selectedField as any]),
       };
 
-      editorFields.addField(field as any);
+      console.log('[DragDrop] Adding field:', field);
+      try {
+        editorFields.addField(field as any);
+        console.log('[DragDrop] Field added successfully');
+      } catch (e) {
+        console.error('[DragDrop] Error adding field:', e);
+      }
 
       setIsFieldWithinBounds(false);
       setSelectedField(null);
@@ -235,6 +247,7 @@ export const EnvelopeEditorFieldDragDrop = ({
   }, []);
 
   useEffect(() => {
+    console.log('[DragDrop] useEffect listeners', { selectedField });
     if (selectedField) {
       window.addEventListener('mousemove', onMouseMove);
       window.addEventListener('mouseup', onMouseClick);
@@ -259,8 +272,14 @@ export const EnvelopeEditorFieldDragDrop = ({
             disabled={isFieldsDisabled}
             key={field.type}
             type="button"
-            onClick={() => setSelectedField(field.type)}
-            onMouseDown={() => setSelectedField(field.type)}
+            onClick={() => {
+              console.log('[DragDrop] Button click', field.type);
+              setSelectedField(field.type);
+            }}
+            onMouseDown={() => {
+              console.log('[DragDrop] Button mousedown', field.type);
+              setSelectedField(field.type);
+            }}
             data-selected={selectedField === field.type ? true : undefined}
             className={cn(
               'group flex h-12 cursor-pointer items-center justify-center rounded-lg border border-border px-4 transition-colors',

@@ -19,10 +19,12 @@ import {
   ZCheckboxFieldMeta,
   ZDateFieldMeta,
   ZEmailFieldMeta,
+  ZImageUploadFieldMeta,
   ZInitialsFieldMeta,
   ZNameFieldMeta,
   ZNumberFieldMeta,
   ZRadioFieldMeta,
+  ZSignatureFieldMeta,
   ZTextFieldMeta,
 } from '../../types/field-meta';
 import { getPageSize } from './get-page-size';
@@ -122,6 +124,45 @@ export const legacy_insertFieldInPDF = async (pdf: PDFDocument, field: FieldWith
         type: P.union(FieldType.SIGNATURE, FieldType.IMAGE_UPLOAD),
       },
       async (field) => {
+        const meta = (field.type === FieldType.SIGNATURE ? ZSignatureFieldMeta : ZImageUploadFieldMeta).safeParse(
+          field.fieldMeta,
+        );
+        if (meta.success && meta.data.label) {
+          const label = meta.data.label;
+          const textAlign = meta.data.textAlign ?? 'left';
+          const labelFontSize = 12;
+          const labelWidth = fontNoto.widthOfTextAtSize(label, labelFontSize);
+
+          let labelX = fieldX;
+          if (textAlign === 'center') {
+            labelX = fieldX + (fieldWidth - labelWidth) / 2;
+          } else if (textAlign === 'right') {
+            labelX = fieldX + fieldWidth - labelWidth;
+          }
+
+          let labelY = pageHeight - fieldY + 2;
+
+          if (pageRotationInDegrees !== 0) {
+            const adjustedPosition = adjustPositionForRotation(
+              pageWidth,
+              pageHeight,
+              labelX,
+              labelY,
+              pageRotationInDegrees,
+            );
+            labelX = adjustedPosition.xPos;
+            labelY = adjustedPosition.yPos;
+          }
+
+          page.drawText(label, {
+            x: labelX,
+            y: labelY,
+            size: labelFontSize,
+            font: fontNoto,
+            rotate: degrees(pageRotationInDegrees),
+          });
+        }
+
         if (field.signature?.signatureImageAsBase64) {
           const image = await pdf.embedPng(field.signature?.signatureImageAsBase64 ?? '');
 
