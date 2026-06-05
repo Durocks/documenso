@@ -88,10 +88,10 @@ export const DocumentSigningPageViewV2 = () => {
       <SignFieldNumberDialog.Root />
       <SignFieldNameDialog.Root />
       <SignFieldInitialsDialog.Root />
-      <SignFieldImageRemoveConfirmationDialog.Root />
-      <SignFieldImageUploadDialog.Root />
       <SignFieldDropdownDialog.Root />
       <SignFieldSignatureDialog.Root />
+      <SignFieldImageUploadDialog.Root />
+      <SignFieldImageRemoveConfirmationDialog.Root />
       <SignFieldCheckboxDialog.Root />
 
       <EnvelopeSignerHeader />
