@@ -1,7 +1,6 @@
 import Konva from 'konva';
 
 import { DEFAULT_SIGNATURE_TEXT_FONT_SIZE } from '../../constants/pdf';
-import { AppError } from '../../errors/app-error';
 import type { TSignatureFieldMeta } from '../../types/field-meta';
 import { resolveFieldOverflowMode } from '../../types/field-meta';
 import { calculateOverflowLayout } from './calculate-overflow-layout';
@@ -19,16 +18,27 @@ void (async () => {
   }
 })();
 
-const getImageDimensions = (img: HTMLImageElement, fieldWidth: number, fieldHeight: number) => {
+export const getImageDimensions = (
+  img: HTMLImageElement,
+  fieldWidth: number,
+  fieldHeight: number,
+  textAlign: string = 'center',
+) => {
   let imageWidth = img.width;
   let imageHeight = img.height;
 
-  const scalingFactor = Math.min(fieldWidth / imageWidth, fieldHeight / imageHeight, 1);
+  const scalingFactor = Math.min(fieldWidth / imageWidth, fieldHeight / imageHeight);
 
   imageWidth = imageWidth * scalingFactor;
   imageHeight = imageHeight * scalingFactor;
 
-  const imageX = (fieldWidth - imageWidth) / 2;
+  let imageX = (fieldWidth - imageWidth) / 2;
+  if (textAlign === 'left') {
+    imageX = 0;
+  } else if (textAlign === 'right') {
+    imageX = fieldWidth - imageWidth;
+  }
+
   const imageY = (fieldHeight - imageHeight) / 2;
 
   return {
@@ -71,6 +81,7 @@ export const createSignatureImage = (
   signatureImageAsBase64: string,
   fieldWidth: number,
   fieldHeight: number,
+  textAlign: string = 'center',
 ): Konva.Image => {
   if (typeof window !== 'undefined') {
     const img = new Image();
@@ -86,7 +97,7 @@ export const createSignatureImage = (
     img.onload = () => {
       image.setAttrs({
         image: img,
-        ...getImageDimensions(img, fieldWidth, fieldHeight),
+        ...getImageDimensions(img, fieldWidth, fieldHeight, textAlign),
       });
 
       // Cache the image as a high-resolution bitmap so it stays sharp on
@@ -112,7 +123,7 @@ export const createSignatureImage = (
 
   return new Konva.Image({
     image: img,
-    ...getImageDimensions(img, fieldWidth, fieldHeight),
+    ...getImageDimensions(img, fieldWidth, fieldHeight, textAlign),
   });
 };
 
@@ -128,19 +139,18 @@ const createFieldSignature = (field: FieldToRender, options: RenderFieldElementO
   });
 
   const fieldTypeName = translations?.[field.type] || field.type;
+  const fieldMeta = field.fieldMeta as TSignatureFieldMeta | undefined;
 
   // Calculate text positioning based on alignment
   const textX = 0;
   const textY = 0;
 
-  let textToRender: string = fieldTypeName;
+  let textToRender: string = field.customText || field.fieldMeta?.label || fieldTypeName;
 
   const signature = field.signature;
 
   // Handle edit mode.
   if (mode === 'edit') {
-    textToRender = fieldTypeName;
-
     // If the field has already been signed and we have the signature data
     // available, render it. Otherwise leave the field type label as a placeholder.
     if (field.inserted && signature?.typedSignature) {
@@ -149,7 +159,7 @@ const createFieldSignature = (field: FieldToRender, options: RenderFieldElementO
 
     if (field.inserted && signature?.signatureImageAsBase64) {
       return {
-        node: createSignatureImage(signature.signatureImageAsBase64, fieldWidth, fieldHeight),
+        node: createSignatureImage(signature.signatureImageAsBase64, fieldWidth, fieldHeight, fieldMeta?.textAlign),
         isImageSignature: true,
         isLabel: false,
       };
@@ -158,26 +168,18 @@ const createFieldSignature = (field: FieldToRender, options: RenderFieldElementO
 
   // Handle sign mode.
   if (mode === 'sign' || mode === 'export') {
-    textToRender = fieldTypeName;
-
-    if (field.inserted && !signature) {
-      throw new AppError('MISSING_SIGNATURE');
-    }
-
     if (signature?.typedSignature) {
       textToRender = signature.typedSignature;
     }
 
     if (signature?.signatureImageAsBase64) {
       return {
-        node: createSignatureImage(signature.signatureImageAsBase64, fieldWidth, fieldHeight),
+        node: createSignatureImage(signature.signatureImageAsBase64, fieldWidth, fieldHeight, fieldMeta?.textAlign),
         isImageSignature: true,
         isLabel: false,
       };
     }
   }
-
-  const fieldMeta = field.fieldMeta as TSignatureFieldMeta | undefined;
 
   // Whether we're rendering the field type name (like "Signature") vs actual signed content.
   // Overflow should not apply to the label.
@@ -191,7 +193,7 @@ const createFieldSignature = (field: FieldToRender, options: RenderFieldElementO
     fontFamily: 'Caveat, sans-serif',
     lineHeight: 1,
     letterSpacing: 0,
-    textAlign: 'center',
+    textAlign: fieldMeta?.textAlign || 'center',
     verticalAlign: 'middle',
     baseX: textX,
     baseY: textY,
@@ -284,7 +286,7 @@ export const renderSignatureFieldElement = (field: FieldToRender, options: Rende
         fontFamily: 'Caveat, sans-serif',
         lineHeight: 1,
         letterSpacing: 0,
-        textAlign: 'center',
+        textAlign: fieldMeta?.textAlign || 'center',
         verticalAlign: 'middle',
         baseX: 0,
         baseY: 0,

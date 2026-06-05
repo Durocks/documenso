@@ -21,6 +21,7 @@ const createFieldImageUpload = (field: FieldToRender, options: RenderFieldElemen
 
   const { fieldX, fieldY, fieldWidth, fieldHeight } = calculateFieldPosition(field, pageWidth, pageHeight);
   const fontSize = field.fieldMeta?.fontSize || 12;
+  const fieldMeta = field.fieldMeta as TImageUploadFieldMeta | undefined;
 
   const fieldText = new Konva.Text({
     id: `${field.renderId}-text`,
@@ -40,13 +41,11 @@ const createFieldImageUpload = (field: FieldToRender, options: RenderFieldElemen
     ((mode === 'sign' || mode === 'export') && signature?.signatureImageAsBase64)
   ) {
     return {
-      node: createSignatureImage(signature.signatureImageAsBase64, fieldWidth, fieldHeight),
+      node: createSignatureImage(signature.signatureImageAsBase64, fieldWidth, fieldHeight, fieldMeta?.textAlign),
       isImage: true,
       isLabel: false,
     };
   }
-
-  const fieldMeta = field.fieldMeta as TImageUploadFieldMeta | undefined;
 
   // Whether we're rendering the field type name vs actual uploaded content.
   const isLabel = true;
