@@ -142,7 +142,7 @@ export const ImageUploadField = ({ className, value, onChange, ...props }: Image
     <div className={cn('relative h-[300px] max-h-[400px] w-full overflow-hidden', className)}>
       {value ? (
         <>
-          <img src={value} className="absolute inset-0 h-full w-full object-contain" alt="Uploaded preview" />
+          <img src={value} className="absolute inset-0 h-full w-full object-cover" alt="Uploaded preview" />
           <button
             type="button"
             className="absolute inset-0 z-40 cursor-pointer bg-transparent"
