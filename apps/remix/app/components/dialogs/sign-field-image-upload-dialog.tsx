@@ -5,6 +5,8 @@ import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { createCallable } from 'react-call';
 
+import { SignFieldImageRemoveConfirmationDialog } from './sign-field-image-remove-confirmation-dialog';
+
 export type SignFieldImageUploadDialogProps = {
   initialImage?: string;
 };
@@ -24,7 +26,11 @@ export const SignFieldImageUploadDialog = createCallable<SignFieldImageUploadDia
             </DialogHeader>
 
             <div className="my-4 rounded-lg border bg-muted/30 p-4">
-              <ImageUploadField value={localImage ?? ''} onChange={setLocalImage} />
+              <ImageUploadField
+                value={localImage ?? ''}
+                onChange={setLocalImage}
+                onRequestClear={async () => await SignFieldImageRemoveConfirmationDialog.call({})}
+              />
             </div>
           </div>
 

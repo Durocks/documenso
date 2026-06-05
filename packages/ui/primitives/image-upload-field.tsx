@@ -5,7 +5,7 @@ import { UploadCloudIcon, XIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { cn } from '../lib/utils';
 
-const loadImage = async (file: File | undefined): Promise<HTMLImageElement> => {
+const loadImage = (file: File | undefined): Promise<HTMLImageElement> => {
   if (!file) {
     throw new Error('No file selected');
   }
@@ -63,6 +63,7 @@ export type ImageUploadFieldProps = {
   className?: string;
   value: string;
   onChange: (_imageDataUrl: string) => void;
+  onRequestClear?: () => Promise<boolean> | boolean;
 };
 
 export const ImageUploadField = ({ className, value, onChange, ...props }: ImageUploadFieldProps) => {
@@ -71,6 +72,29 @@ export const ImageUploadField = ({ className, value, onChange, ...props }: Image
   const $fileInput = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { onRequestClear } = props;
+
+  const handleClearImage = async () => {
+    if (value && onRequestClear) {
+      const shouldClear = await onRequestClear();
+
+      if (shouldClear === false) {
+        return;
+      }
+    }
+
+    if ($canvas.current) {
+      const ctx = $canvas.current.getContext('2d');
+
+      ctx?.clearRect(0, 0, $canvas.current.width, $canvas.current.height);
+    }
+
+    if ($fileInput.current) {
+      $fileInput.current.value = '';
+    }
+
+    onChange?.('');
+  };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsUploading(true);
@@ -114,22 +138,28 @@ export const ImageUploadField = ({ className, value, onChange, ...props }: Image
     }
   };
 
-  const clearImage = () => {
-    onChange?.('');
-  };
-
   return (
     <div className={cn('relative h-[300px] max-h-[400px] w-full overflow-hidden', className)}>
       {value ? (
-        <img src={value} className="absolute inset-0 h-full w-full object-contain" alt="Uploaded preview" />
+        <>
+          <img src={value} className="absolute inset-0 h-full w-full object-contain" alt="Uploaded preview" />
+          <button
+            type="button"
+            className="absolute inset-0 z-40 cursor-pointer bg-transparent"
+            onClick={() => void handleClearImage()}
+            aria-label={t`Remove image`}
+            title={t`Remove image`}
+          />
+        </>
       ) : (
-        <canvas ref={$canvas} className="h-full w-full object-contain" style={{ touchAction: 'none' }} {...props} />
+        <canvas ref={$canvas} className="h-full w-full object-contain" style={{ touchAction: 'none' }} />
       )}
 
       <input ref={$fileInput} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
 
       {!value && (
-        <div
+        <button
+          type="button"
           className="absolute inset-0 z-50 flex h-full w-full cursor-pointer items-center justify-center rounded-lg border-2 border-muted-foreground/20 border-dashed bg-background/50 transition-colors hover:bg-background/80"
           onClick={() => $fileInput.current?.click()}
         >
@@ -142,15 +172,16 @@ export const ImageUploadField = ({ className, value, onChange, ...props }: Image
               <Trans>PNG, JPG or JPEG (max 5MB)</Trans>
             </span>
           </motion.div>
-        </div>
+        </button>
       )}
 
       {value && (
         <button
           type="button"
           className="absolute top-2 right-2 z-50 rounded-full border bg-background p-1 transition-colors hover:bg-muted"
-          onClick={clearImage}
-          title="Clear image"
+          onClick={() => void handleClearImage()}
+          title={t`Remove image`}
+          aria-label={t`Remove image`}
         >
           <XIcon className="h-4 w-4" />
         </button>
