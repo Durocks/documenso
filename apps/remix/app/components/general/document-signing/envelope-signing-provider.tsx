@@ -10,7 +10,7 @@ import { trpc } from '@documenso/trpc/react';
 import type { TSignEnvelopeFieldValue } from '@documenso/trpc/server/envelope-router/sign-envelope-field.types';
 import { EnvelopeType, type Field, FieldType, type Recipient, RecipientRole, SigningStatus } from '@prisma/client';
 import { DateTime } from 'luxon';
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { prop, sortBy } from 'remeda';
 
 export type EnvelopeSigningContextValue = {
@@ -131,8 +131,20 @@ export const EnvelopeSigningProvider = ({
 
   const { envelope, recipient } = envelopeData;
 
-  const [fullName, setFullName] = useState(initialFullName || '');
+  const [fullName, setFullName] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('fullName') || initialFullName || '';
+    }
+    return initialFullName || '';
+  });
+
   const [email, setEmail] = useState(initialEmail || '');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('fullName', fullName);
+    }
+  }, [fullName]);
 
   const [showPendingFieldTooltip, setShowPendingFieldTooltip] = useState(false);
 

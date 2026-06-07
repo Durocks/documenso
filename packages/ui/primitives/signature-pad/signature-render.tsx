@@ -112,8 +112,21 @@ export const SignatureRender = ({ className, value }: SignatureRenderProps) => {
   useEffect(() => {
     if (isBase64Image(value)) {
       renderImageSignature();
-    } else {
-      renderTypedSignature();
+      return;
+    }
+
+    renderTypedSignature();
+
+    if (typeof window !== 'undefined' && 'fonts' in document) {
+      let active = true;
+      document.fonts.ready.then(() => {
+        if (active) {
+          renderTypedSignature();
+        }
+      });
+      return () => {
+        active = false;
+      };
     }
   }, [value]);
 

@@ -45,63 +45,81 @@ export const SignatureFieldRender = ({ className, value, textAlign = 'center' }:
   }, []);
 
   useEffect(() => {
-    if (!$el.current) {
-      return;
-    }
+    let active = true;
 
-    const ctx = $el.current.getContext('2d');
+    const render = () => {
+      if (!$el.current) {
+        return;
+      }
 
-    if (!ctx) {
-      return;
-    }
+      const ctx = $el.current.getContext('2d');
 
-    const canvasWidth = $el.current.width;
-    const canvasHeight = $el.current.height;
-    const fontFamily = 'Caveat';
+      if (!ctx) {
+        return;
+      }
 
-    const sourceCanvas = document.createElement('canvas');
-    sourceCanvas.width = canvasWidth;
-    sourceCanvas.height = canvasHeight;
+      const canvasWidth = $el.current.width;
+      const canvasHeight = $el.current.height;
+      const fontFamily = 'Caveat';
 
-    const sourceCtx = sourceCanvas.getContext('2d');
+      const sourceCanvas = document.createElement('canvas');
+      sourceCanvas.width = canvasWidth;
+      sourceCanvas.height = canvasHeight;
 
-    if (!sourceCtx) {
-      return;
-    }
+      const sourceCtx = sourceCanvas.getContext('2d');
 
-    sourceCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-    sourceCtx.textAlign = 'center';
-    sourceCtx.textBaseline = 'middle';
-    sourceCtx.fillStyle = 'currentColor';
+      if (!sourceCtx) {
+        return;
+      }
 
-    const desiredWidth = canvasWidth * 0.98;
-    const desiredHeight = canvasHeight * 0.92;
+      sourceCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+      sourceCtx.textAlign = 'center';
+      sourceCtx.textBaseline = 'middle';
+      sourceCtx.fillStyle = 'currentColor';
 
-    let fontSize = 18;
-    sourceCtx.font = `${fontSize}px ${fontFamily}`;
+      const desiredWidth = canvasWidth * 0.98;
+      const desiredHeight = canvasHeight * 0.92;
 
-    const measureTextBounds = () => {
-      const metrics = sourceCtx.measureText(value);
-      const measuredWidth = metrics.actualBoundingBoxRight - metrics.actualBoundingBoxLeft || metrics.width || 1;
-      const measuredHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent || fontSize;
+      let fontSize = 18;
+      sourceCtx.font = `${fontSize}px ${fontFamily}`;
 
-      return {
-        width: measuredWidth,
-        height: measuredHeight,
+      const measureTextBounds = () => {
+        const metrics = sourceCtx.measureText(value);
+        const measuredWidth = metrics.actualBoundingBoxRight - metrics.actualBoundingBoxLeft || metrics.width || 1;
+        const measuredHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent || fontSize;
+
+        return {
+          width: measuredWidth,
+          height: measuredHeight,
+        };
       };
+
+      for (let i = 0; i < 2; i += 1) {
+        const bounds = measureTextBounds();
+        const scale = Math.min(desiredWidth / bounds.width, desiredHeight / bounds.height);
+        fontSize *= scale;
+        sourceCtx.font = `${fontSize}px ${fontFamily}`;
+      }
+
+      sourceCtx.fillText(value, canvasWidth / 2, canvasHeight / 2);
+
+      const trimmedCanvas = trimTransparentCanvasMargins(sourceCanvas);
+      drawCanvasWithContain(trimmedCanvas);
     };
 
-    for (let i = 0; i < 2; i += 1) {
-      const bounds = measureTextBounds();
-      const scale = Math.min(desiredWidth / bounds.width, desiredHeight / bounds.height);
-      fontSize *= scale;
-      sourceCtx.font = `${fontSize}px ${fontFamily}`;
+    render();
+
+    if (typeof window !== 'undefined' && 'fonts' in document) {
+      document.fonts.ready.then(() => {
+        if (active) {
+          render();
+        }
+      });
     }
 
-    sourceCtx.fillText(value, canvasWidth / 2, canvasHeight / 2);
-
-    const trimmedCanvas = trimTransparentCanvasMargins(sourceCanvas);
-    drawCanvasWithContain(trimmedCanvas);
+    return () => {
+      active = false;
+    };
   }, [textAlign, value]);
 
   return <canvas ref={$el} className={cn('h-full w-full dark:hue-rotate-180 dark:invert', className)} />;
